@@ -27,17 +27,33 @@ no images are located in media folder
     download img as {postnum}_{index}{extension}
     replace img src with ..\media\{postnum}_{index}{extension}
 44347908403
+40813225129
 
 image and audio
 image and audio are located in media folder, audio with {postnum}{extension}, image with {postnum}_{index}{extension}
     replace img src with ..\media\{postnum}_{index}{extension}
 100048033044
 
+audio
+audio is not located in media folder
+    download audio as {postnum}{extension}
+    replace audio src with ..\media\{postnum}{extension}
+109920870539
+
 image and video
 image and video are located in media folder, video with {postnum}{extension}, image with {postnum}_{index}{extension}
     replace embed src with ..\media\{postnum}{extension}
     replace img src with ..\media\{postnum}_{index}{extension}
 114968110729
+
+optional
+image is not located in media folder, but is not a tumblr image (externally-linked image)
+    download img as {postnum}_{expected_index}{extension}
+100048033044
+103604528139
+
+look later:
+144088599999
 
 filetypes in \media:
     .jpg
@@ -47,9 +63,3 @@ filetypes in \media:
     .mp4
     .mov
     .gifv
-need to support:
-    .jpg
-    .png
-    .gif
-    .gifv
-however cases like

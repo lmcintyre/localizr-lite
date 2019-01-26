@@ -31,6 +31,7 @@ def getpath(file, src, index=-1):
 
 
 def localize(file, root):
+    print(f"File: {file}:")
     realfile = root.joinpath(file)
 
     with open(realfile, encoding="utf8") as fp:
@@ -39,81 +40,79 @@ def localize(file, root):
     imgs = soup.find_all("img")
     vids = soup.find_all("embed", attrs={"type": "video/mp4"})
     audio = soup.find_all("embed", attrs={"type": "audio/mpeg"})
-    multi = len(imgs) + len(vids) + len(audio) > 1
+    multi = (len(imgs) + len(vids) + len(audio)) > 1
     tagtotal = 0
+    imgtotal = 0
 
     for tag in vids:
-        print(f"Video: {tag}")
+        # print(f"\tVideo: {tag}")
 
         vid = "".join(tag["src"].split(" "))
+
+        savepath = vid
+
+        if not os.path.splitext(vid)[1]:
+            loc = len(vid) - 3
+            savepath = vid[:loc] + "." + vid[loc:]
+
         if parse.urlparse(vid)[1]:
+            # print(parse.urlparse(vid)[1])
             savepath = getpath(file, vid)
-            spex = os.path.exists(savepath[3:])
-            if spex:
-                print(f"{savepath} exists: {spex}")
+
+        if savepath:
+            # print(f"\tvid savepath: {savepath}")
+            spexmov = os.path.exists(savepath[3:] + ".mov")
+            spexmp4 = os.path.exists(savepath[3:] + ".mp4")
+            if spexmov:
+                savepath = savepath + ".mov"
+            elif spexmp4:
+                savepath = savepath + ".mp4"
+
+        print(f"\t{savepath} exists: {os.path.exists(savepath[3:])}")
 
     for tag in audio:
-        print(f"Audio: {tag}")
+        # print(f"\tAudio: {tag}")
 
         aud = "".join(tag["src"].split(" "))
+        savepath = aud
+
         if parse.urlparse(aud)[1]:
             savepath = getpath(file, aud)
-            #TODO handle as according to cases when audio is not downloaded
+            # TODO handle as according to cases when audio is not downloaded
         else:
             tag["src"] = aud
-            if os.path.exists(aud[3:]):
-                print(f"{aud} exists: {os.path.exists(aud[3:])}")
 
+        spex = os.path.exists(savepath[3:])
+        print(f"\t{aud} exists: {spex}")
 
     for i, tag in enumerate(imgs):
-        print(f"Image: {tag}")
+        # print(f"\tImage: {tag} | {i}")
 
         img = "".join(tag["src"].split(" "))
-        if parse.urlparse(img)[1]:
+        savepath = img
+        tparse = parse.urlparse(img)[1]
+        local = "tumblr" in tparse
+        if tparse:
             savepath = getpath(file, img)
             savepathind = getpath(file, img, index=i)
             savepathindcor = getpath(file, img, index=i-1)
-
-            spex = os.path.exists(savepath[3:])
             spindex = os.path.exists(savepathind[3:])
             spindcor = os.path.exists(savepathindcor[3:])
 
+        spex = os.path.exists(savepath[3:])
+
+        if local:
             if spex:
-                print(f"{savepath} exists: {spex}")
+                print(f"\t{savepath} exists: {spex}")
+                location = spex
             elif spindex:
-                print(f"{savepathind} exists: {spindex}")
+                print(f"\t{savepathind} exists: {spindex}")
+                location = spindex
             elif spindcor:
-                print(f"{savepathindcor} exists: {spindcor}")
+                print(f"\t{savepathindcor} exists: {spindcor}")
+                location = spindcor
 
 
-        # img = tag["src"]
-        # if parse.urlparse(img)[1]:
-        #     media = os.path.join(os.path.dirname("..\\"), "media")
-        #     begin = os.path.splitext(file)[0].strip()
-        #     end = os.path.splitext(parse.urlparse(img)[2])[1].strip()
-        #
-        #     if multi:
-        #         newimg = begin + f"_{i}" + end
-        #     else:
-        #         newimg = begin + end
-        #
-        #     imgmediapath = os.path.join(media, newimg)
-        #
-        #     # check existence at 3 because relative wouldn't work here, but we need it in html
-        #     # first check our best guess (multis seem to always have a suffix
-        #     # if our best guess didn't work we attempt to add _0 to it because idk
-        #     # if THAT doesn't work, we download the file under the original expected filename
-        #     if not os.path.exists(imgmediapath[3:]):
-        #         origmediapath = imgmediapath
-        #         imgmediapath = os.path.join(media, begin + "_0" + end)
-        #         if not os.path.exists(imgmediapath[3:]) and i < 1:
-        #             print(f"Could not find images for {begin}, downloading...")
-        #             download(img, root, origmediapath)
-        #             if not os.path.exists(origmediapath[3:]):
-        #                 print("i have failed you")
-        #             imgmediapath = origmediapath
-
-            # tag["src"] = imgmediapath
 
     # with open(realfile, "w", encoding="utf8") as fp:
     #     fp.write(str(soup.prettify()))

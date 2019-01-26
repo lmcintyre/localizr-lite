@@ -29,6 +29,11 @@ no images are located in media folder
 44347908403
 40813225129
 
+video
+video is in media folder with {postnum}{extension with no .}
+    replace embed src with ..\media\{postnum}{extension}
+93725868324
+
 image and audio
 image and audio are located in media folder, audio with {postnum}{extension}, image with {postnum}_{index}{extension}
     replace img src with ..\media\{postnum}_{index}{extension}
@@ -46,11 +51,18 @@ image and video are located in media folder, video with {postnum}{extension}, im
     replace img src with ..\media\{postnum}_{index}{extension}
 114968110729
 
+video
+video is located in media folder with {postnum}.mov
+    replace embed src with ..\media\{postnum}.mov
+52181716969
+
 optional
 image is not located in media folder, but is not a tumblr image (externally-linked image)
     download img as {postnum}_{expected_index}{extension}
 100048033044
 103604528139
+for 8139 the image tag is missing entirely, yet the image is in media folder,
+and in posts xml it has a tumblr media address ???
 
 look later:
 144088599999
